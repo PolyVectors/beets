@@ -6,9 +6,10 @@ build: vendor
 	rm main.o
 	
 vendor:
+	mkdir bin
 	$(MAKE) -C ./vendor/concord
 	mv ./vendor/concord/lib/libdiscord.a bin
 
 clean:
 	rm main
-	rm bin/*
+	rm -rf bin
