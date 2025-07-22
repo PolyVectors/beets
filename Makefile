@@ -1,7 +1,7 @@
 .PHONY: build vendor clean
 
 HARE=hare
-HAREFLAGS=-ldiscord -L./bin/
+HAREFLAGS=-lcurl -ldiscord -L./bin/
 
 build: vendor
 	$(HARE) build $(HAREFLAGS) src/main.ha

@@ -1,19 +1,10 @@
 use types::c;
 
-// struct discord_ready {
-//     int v;
-//     struct discord_user * user;
-//     struct discord_guilds * guilds;
-//     char * session_id;
-//     struct integers * shard;
-//     struct discord_application * application;
-// };
-
 export type discord_ready = struct {
     v: i32,
     user: *discord_user,
-    guilds: *opaque,
+//  struct discord_guilds * guilds;
     session_id: *c::char,
-    shard: *opaque,
-    application: *opaque,
+//  struct integers * shard;
+    application: *discord_application
 };
