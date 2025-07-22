@@ -14,6 +14,6 @@ export type discord_ready = struct {
     user: *discord_user,
     guilds: *opaque,
     session_id: *c::char,
-    integers: *opaque,
+    shard: *opaque,
     application: *opaque,
 };

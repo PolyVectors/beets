@@ -3,7 +3,7 @@ use types::c;
 
 use bindings::concord;
 
-def GUILD_ID: u64 = 850495172700536882;
+const GUILD_ID: u64 = 850495172700536882;
 
 fn on_ready(client: *concord::discord, event: const *concord::discord_ready) void = {
 	let params = concord::discord_create_guild_application_command_params {
