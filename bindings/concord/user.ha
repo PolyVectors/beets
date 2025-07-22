@@ -6,23 +6,6 @@ export type discord_premium_types = enum {
     DISCORD_PREMIUM_NITRO,
 };
 
-// struct discord_user {
-//     u64snowflake id;
-//     char * username;
-//     char * discriminator;
-//     char * avatar;
-//     bool bot;
-//     bool System;
-//     bool mfa_enabled;
-//     char * banner;
-//     int accent_color;
-//     char * locale;
-//     bool verified;
-//     char * email;
-//     u64bitmask flags;
-//     enum discord_premium_types premium_type;
-//     u64bitmask public_flags;
-// };
 export type discord_user = struct {
     id: u64snowflake,
     username: *c::char,
