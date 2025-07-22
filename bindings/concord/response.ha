@@ -1,0 +1,1 @@
+export type discord_ret_application_command = opaque;
