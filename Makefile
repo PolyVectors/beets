@@ -4,7 +4,7 @@ HARE=hare
 HAREFLAGS=-lcurl -ldiscord -L./bin/
 
 build: vendor
-	$(HARE) build $(HAREFLAGS) src/main.ha
+	$(HARE) build $(HAREFLAGS) cmd/main.ha
 	
 vendor:
 	mkdir -p bin
