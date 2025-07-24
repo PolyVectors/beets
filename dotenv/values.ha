@@ -17,19 +17,19 @@ export fn get_value(key: str) (str | u64) = {
 
         const buffer = io::drain(handle)!;
         defer free(buffer);
-        const env = strings::fromutf8(buffer)!;
 
-        for (let entry .. strings::split(env, "\n")!) {
+        for (let entry .. strings::split(strings::fromutf8(buffer)!, "\n")!) {
                 let key_values = strings::split(entry, "=")!;
-
                 let env_key = 0z;
+
                 for (env_key < len(key_values); env_key += 2) {
-                        if (key_values[env_key] == key) {
-                                if (strings::toutf8(key_values[env_key + 1])[0] == '\"') {
-                                        return strings::dup(strings::sub(key_values[env_key + 1], 1, len(key_values[env_key + 1]) - 1))!;
-                                } else {
-                                        return math::absi64(strconv::stoi64(key_values[env_key + 1])!);
-                                };
+                        if (key_values[env_key] != key)
+                                continue;
+
+                        if (strings::toutf8(key_values[env_key + 1])[0] == '\"') {
+                                return strings::dup(strings::sub(key_values[env_key + 1], 1, len(key_values[env_key + 1]) - 1))!;
+                        } else {
+                                return math::absi64(strconv::stoi64(key_values[env_key + 1])!);
                         };
                 };
         };
