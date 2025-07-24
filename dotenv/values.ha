@@ -27,9 +27,13 @@ export fn get_value(key: str) (str | u64) = {
 				continue;
 
 			if (strings::toutf8(key_values[env_key + 1])[0] == '\"') {
-				return strings::dup(strings::sub(key_values[env_key + 1], 1, len(key_values[env_key + 1]) - 1))!;
+				return strings::dup(
+					strings::sub(key_values[env_key + 1],
+					1, len(key_values[env_key + 1]) - 1))!;
 			} else {
-				return math::absi64(strconv::stoi64(key_values[env_key + 1])!);
+				return math::absi64(
+					strconv::stoi64(
+						key_values[env_key + 1])!);
 			};
 		};
 	};
