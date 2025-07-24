@@ -12,17 +12,24 @@ fn on_ready(client: *concord::discord, event: const *concord::ready) void = {
 	};
 
 	let guild_id = dotenv::get_value("GUILD_ID") as u64;
-	concord::create_guild_application_command(client, event.application.id, guild_id, &params, null);
+	concord::create_guild_application_command(client, event.application.id,
+		guild_id, &params, null);
 };
 
-fn on_interaction(client: *concord::discord, event: const *concord::interaction) void = {
+fn on_interaction(
+	client: *concord::discord,
+	event: const *concord::interaction
+) void = {
 	if (event.interaction_type != concord::interaction_type::APPLICATION_COMMAND)
 		return;
 };
 
 export fn main() void = {
 	let bot_token = dotenv::get_value("BOT_TOKEN") as str;
-	let client: *concord::discord = concord::init(c::nulstr(strings::concat(bot_token, "\0")!));
+	defer free(bot_token);
+
+	let client: *concord::discord = concord::init(
+		c::nulstr(strings::concat(bot_token, "\0")!));
 
 	concord::set_on_ready(client, &on_ready);
 	concord::set_on_interaction_create(client, &on_interaction);
