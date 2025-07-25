@@ -1,5 +1,16 @@
 use types::c;
 
+export type application_command_option_choice = struct {
+	name: *c::char,
+	value: *json_char
+};
+
+export type application_command_option_choices = struct {
+	length: i32,
+	array: *application_command_option_choice,
+	realsize: i32,
+};
+
 export type application_command = struct {
 	id: u64snowflake
 	// enum discord_application_command_types type;

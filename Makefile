@@ -8,7 +8,7 @@ build: vendor
 	
 vendor:
 	mkdir -p bin
-	$(MAKE) -C ./vendor/concord
+	$(MAKE) voice -C ./vendor/concord
 	mv ./vendor/concord/lib/libdiscord.a bin
 
 clean:

@@ -1,7 +1,6 @@
 use fmt;
 use strings;
 use types::c;
-
 use dotenv;
 use bindings::concord;
 
@@ -22,6 +21,24 @@ fn on_interaction(
 ) void = {
 	if (event.interaction_type != concord::interaction_type::APPLICATION_COMMAND)
 		return;
+
+	if (event.data.name == c::nulstr("play\0")) {
+		let params = concord::interaction_response {
+			callback_type = concord::interaction_callback_type::CHANNEL_MESSAGE_WITH_SOURCE,
+			data = &concord::interaction_callback_data {
+				components = null,
+				tts = false,
+				content = c::nulstr("test\0"),
+				embeds = null,
+				flags = 0,
+				attachments = null,
+				choices = null,
+
+				custom_id = null,
+				title = null,
+			}
+		};
+	};
 };
 
 export fn main() void = {
