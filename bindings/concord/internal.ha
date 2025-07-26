@@ -1,15 +1,35 @@
-// struct discord {
-// 	/** `DISCORD` logging module */
-// 	struct logconf conf;
-// 	/** whether this is the original client or a clone */
-// 	bool is_original;
-// 	/** the bot token */
-// 	char *token;
-// 	/** the io poller for listening to file descriptors */
-// 	struct io_poller *io_poller;
+use types::c;
+use posix;
 
-// 	/** the user's message commands @see discord_set_on_command() */
-// 	struct discord_message_commands commands;
+export type message_commands = struct {
+	conf: logconf,
+	// struct ccord_szbuf prefix;
+	// discord_ev_message fallback;
+	// int length;
+	// int capacity;
+	// struct _discord_message_commands_entry *entries;
+};
+
+export type timers = struct {
+	q: *opaque,
+	io: *io_poller,
+	active: struct {
+		is_active: bool,
+		thread: posix::pthread_t,
+		timer: *timer,
+		skip_update_phase: bool
+	},
+	lock: posix::pthread_mutex_t,
+	cond: posix::pthread_cond_t,
+};
+
+export type discord = struct {
+	conf: logconf,
+	is_original: bool,
+	token: *c::char,
+	io_poller: *io_poller,
+
+	commands: message_commands,
 // 	/** user's data reference counter for automatic cleanup */
 // 	struct discord_refcounter refcounter;
 
@@ -25,10 +45,10 @@
 // 	/** fd that gets triggered when ccord_shutdown_async is called */
 // 	int shutdown_fd;
 
-// 	struct {
-// 		struct discord_timers internal;
-// 		struct discord_timers user;
-// 	} timers;
+	timers: struct {
+		internal: timers,
+		user: timers
+	},
 
 // 	/** wakeup timer handle */
 // 	struct {
@@ -38,10 +58,8 @@
 // 		unsigned id;
 // 	} wakeup_timer;
 
-// 	/** triggers when idle */
-// 	void (*on_idle)(struct discord *client);
-// 	/** triggers once per loop cycle */
-// 	void (*on_cycle)(struct discord *client);
+	on_idle: *fn(*discord) void,
+	on_cycle: *fn(*discord) void,
 
 // 	/** user arbitrary data @see discord_set_data() */
 // 	void *data;
@@ -56,10 +74,6 @@
 // 		pthread_cond_t cond;
 // 	} * workers;
 
-// 	#ifdef CCORD_VOICE
 // 	struct discord_voice *vcs;
 // 	struct discord_voice_evcallbacks voice_cbs;
-// 	#endif /* CCORD_VOICE */
-// };
-
-export type discord = opaque;
+};

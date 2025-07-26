@@ -50,5 +50,5 @@ export fn main() void = {
 
 	concord::set_on_ready(client, &on_ready);
 	concord::set_on_interaction_create(client, &on_interaction);
-	// concord::run(client);
+	concord::run(client);
 };

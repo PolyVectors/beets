@@ -32,16 +32,16 @@ export type interaction_data = struct {
 };
 
 export type interaction_callback_data = struct {
-    components: nullable *components,
-    tts: bool,
-    content: *c::char,
-    embeds: nullable *embeds,
-    flags: u64bitmask,
-    attachments: nullable *attachments,
-    choices: nullable *application_command_option_choices,
+	components: nullable *components,
+	tts: bool,
+	content: *c::char,
+	embeds: nullable *embeds,
+	flags: u64bitmask,
+	attachments: nullable *attachments,
+	choices: nullable *application_command_option_choices,
 
-    custom_id: nullable *c::char,
-    title: nullable *c::char,
+	custom_id: nullable *c::char,
+	title: nullable *c::char,
 };
 
 export type interaction = struct {

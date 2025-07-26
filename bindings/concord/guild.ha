@@ -72,7 +72,7 @@ export type guild = struct {
 };
 
 export type guilds = struct {
-    guild_size: i32,
-    array: *guild,
-    realsize: i32,
+	guild_size: i32,
+	array: *guild,
+	realsize: i32,
 };

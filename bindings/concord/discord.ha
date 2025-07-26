@@ -1,9 +1,8 @@
 use types::c;
 
-export @symbol("discord_init") fn init(
-	token: *c::char
-) *discord;
+export type timer = struct {
+	id: u32,
+};
 
-export @symbol("discord_run") fn run(
-	client: *discord
-) CCORDcode;
+export @symbol("discord_init") fn init(token: *c::char) *discord;
+export @symbol("discord_run") fn run(client: *discord) CCORDcode;
