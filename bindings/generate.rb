@@ -57,10 +57,10 @@ infile.read.split("\n").each_with_index { |line, index|
         else
             name = line.split.last.chomp(';')
             is_pointer = name.start_with?('*')
-            name = is_pointer ? name = name[1..-1] : name
+            name = name[1..-1] if is_pointer
 
             type = convert_type(line.split[0..-2].join(' '), is_pointer)
-            outfile_contents << "        #{name}: #{type},\n"
+            outfile_contents << "\t#{name}: #{type},\n"
         end
     when Definition::ENUM
         case line
@@ -69,13 +69,11 @@ infile.read.split("\n").each_with_index { |line, index|
         when /};/
             outfile_contents << line + "\n\n"
         else
-            outfile_contents << "        #{line}\n"
+            outfile_contents << "\t#{line}\n"
         end
     end 
 
-    if line.include?("};")
-        current_defined = Definition::NONE
-    end
+    current_defined = Definition::NONE if line.start_with?("};")
 }
 outfile_contents = outfile_contents.strip
 infile.close()
