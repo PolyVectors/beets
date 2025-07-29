@@ -1,3 +1,7 @@
+if ARGV.length != 2
+    abort(USAGE)
+end
+
 USAGE = "Usage: generate INFILE OUTFILE"
 
 TYPE_CONVERSIONS = {
@@ -15,21 +19,14 @@ module Definition
     FUNCTION = 3
 end
 
-if ARGV.length != 2
-    abort(USAGE)
-end
-
 def convert_type(type, is_pointer)
-    type = is_pointer ? type = type.prepend('*') : type
+    type = type.prepend('*') if is_pointer
+    type = "*opaque" if type == "*void"
 
     if TYPE_CONVERSIONS.has_key?(type) then
         return TYPE_CONVERSIONS[type]
     elsif type.start_with?("enum") or type.start_with?("struct")
         return type.split.last
-    end
-
-    if type == "*void"
-        return "*opaque"
     end
 
     return type
@@ -80,9 +77,8 @@ infile.read.split("\n").each_with_index { |line, index|
         current_defined = Definition::NONE
     end
 }
-infile.close()
-
 outfile_contents = outfile_contents.strip
+infile.close()
 
 outfile = File.new(ARGV[1], "w")
 outfile.write(outfile_contents)
