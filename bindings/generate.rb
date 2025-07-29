@@ -12,6 +12,7 @@ module Definition
 end
 
 def convert_type(name, type, is_pointer)
+    # TODO: what is the idiomatic way to do this???
     case type
     when "int"
         type = "i32"
@@ -19,6 +20,10 @@ def convert_type(name, type, is_pointer)
         type = "u32"
     when "char"
         type = "c::char"
+    when "size_t"
+        type = "size"
+    when "int64_t"
+        type = "i64"
     end
 
     type = type.prepend('*') if is_pointer
@@ -35,10 +40,6 @@ def convert_type(name, type, is_pointer)
     end
 
     return "\t#{name}: #{type},\n"
-end
-
-def convert_struct
-
 end
 
 infile = File.open(ARGV[0])
