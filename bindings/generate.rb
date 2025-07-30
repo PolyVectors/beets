@@ -28,20 +28,20 @@ def convert_type(name, type, is_pointer, indentation_amount)
         type = "i64"
     end
 
-    type = type.prepend('*') if is_pointer
-    type = "*opaque" if type == "*void"
-    
     if type.start_with?("enum") or type.start_with?("struct")
         type = type.split.last
-        return "#{"\t"*indentation_amount}#{name}: #{type},\n"
+        return type
     end
+
+    type = type.prepend('*') if is_pointer
+    type = "*opaque" if type == "*void"
 
     if name.include?("[")
         type.prepend(name.split("[")[1..-1].join("[").prepend("["))
         name = name.split("[").first
     end
 
-    return "#{"\t"*indentation_amount}#{name}: #{type},\n"
+    return type
 end
 
 infile = File.open(ARGV[0])
@@ -53,7 +53,8 @@ outfile_contents = ""
 
 infile.read.split("\n").each_with_index{ |line|
     line = line.strip
-    next if line.start_with?("/*", "*/", "*") or line.empty?
+    next if line.start_with?("/*", "*/", "*") || line.empty?
+    next if line.start_with?("#ifndef", "#ifdef", "#endif", "extern", "#include")
     formatted_infile << line + "\n"
 }.join("\n")
 
@@ -75,9 +76,13 @@ while index < formatted_infile.length do
                 l = formatted_infile[i].strip
 
                 if l.start_with?("}") && l.end_with?(";") && l != "};"
+                    is_pointer = l.include?("*")
                     name = l.split("}").last.chomp(";").strip
-                    outfile_contents << "\n#{"\t"*indentation_amount}#{name}: struct {\n"
+                    name = name[2..-1] if is_pointer
+
+                    outfile_contents << "#{"\t"*indentation_amount}#{name}: #{"*" if is_pointer}struct {\n"
                     indentation_amount += 1
+
                     break
                 end
             end
@@ -96,11 +101,22 @@ while index < formatted_infile.length do
         when /^\}.*;\s*$/
             indentation_amount -= 1
             outfile_contents << "#{"\t"*indentation_amount}},\n"
+        when /.*\(.*\);\s*/
+            name = line.split("(*")[1].split(")").first
+            return_type = convert_type(name, line.split("(").first.strip, false, indentation_amount)
+
+            params = line.split("(").last.chomp(");").split(",").map do |param|
+                convert_type(name, param.strip, false, indentation_amount)
+            end.join(", ")
+
+            outfile_contents << "#{"\t"*indentation_amount}#{name}: *fn(#{params}) #{return_type},\n"
         else
             name = line.split.last.chomp(';')
             is_pointer = name.start_with?('*')
             name = name[1..-1] if is_pointer
-            outfile_contents << convert_type(name, line.split[0..-2].join(' '), is_pointer, indentation_amount)
+            type = convert_type(name, line.split[0..-2].join(' '), is_pointer, indentation_amount)
+
+            outfile_contents << "#{"\t"*indentation_amount}#{name}: #{type},\n"
         end
     when Definition::ENUM
         case line
@@ -109,8 +125,10 @@ while index < formatted_infile.length do
         when /^};$/
             outfile_contents << line + "\n\n"
         else
-            outfile_contents << "#{"\t"*indentation_amount}#{line}\n"
+            outfile_contents << "\t#{line}\n"
         end
+    when Definition::FUNCTION
+        
     end
 
     current_defined = Definition::NONE if line.start_with?("};")
