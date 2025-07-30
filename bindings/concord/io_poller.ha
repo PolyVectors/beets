@@ -1,1 +1,0 @@
-export type io_poller = opaque;

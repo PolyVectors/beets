@@ -35,11 +35,7 @@ def convert_type(name, type, is_pointer, indentation_amount)
 
     type = type.prepend('*') if is_pointer
     type = "*opaque" if type == "*void"
-
-    if name.include?("[")
-        type.prepend(name.split("[")[1..-1].join("[").prepend("["))
-        name = name.split("[").first
-    end
+    type.prepend(name.split("[")[1..-1].join("[").prepend("[")) if name.include?("[")
 
     return type
 end
@@ -68,10 +64,18 @@ while index < formatted_infile.length do
         current_defined = Definition::ENUM
     end
 
+    struct_member_struct = /^struct {$/
+    struct_definition = /^struct/
+    struct_enum_terminator = /^};$/
+    struct_member_struct_terminator = /^\}.*;\s*$/
+    struct_function_definition = /.*\(.*\);\s*/
+
+    enum_definition = /^enum/
+
     case current_defined
     when Definition::STRUCT
         case line
-        when /^struct {$/
+        when struct_member_struct
             for i in index..formatted_infile.length - 1 do
                 l = formatted_infile[i].strip
 
@@ -86,7 +90,7 @@ while index < formatted_infile.length do
                     break
                 end
             end
-        when /^struct/
+        when struct_definition
             if line[-1] == ";"
                 name = line.split.last[0..-2]
                 is_pointer = name.start_with?('*')
@@ -96,12 +100,12 @@ while index < formatted_infile.length do
             else
                 outfile_contents << "export type #{line.split[1]} = struct {\n"
             end
-        when /^};$/
+        when struct_enum_terminator
             outfile_contents << line + "\n\n"
-        when /^\}.*;\s*$/
+        when struct_member_struct_terminator
             indentation_amount -= 1
             outfile_contents << "#{"\t"*indentation_amount}},\n"
-        when /.*\(.*\);\s*/
+        when struct_function_definition
             name = line.split("(*")[1].split(")").first
             return_type = convert_type(name, line.split("(").first.strip, false, indentation_amount)
 
@@ -114,15 +118,17 @@ while index < formatted_infile.length do
             name = line.split.last.chomp(';')
             is_pointer = name.start_with?('*')
             name = name[1..-1] if is_pointer
+            name = name.split("[").first if name.include?("[")
+
             type = convert_type(name, line.split[0..-2].join(' '), is_pointer, indentation_amount)
 
             outfile_contents << "#{"\t"*indentation_amount}#{name}: #{type},\n"
         end
     when Definition::ENUM
         case line
-        when /^enum/
+        when enum_definition
             outfile_contents << "export type #{line.split[1]} = enum {\n"
-        when /^};$/
+        when struct_enum_terminator
             outfile_contents << line + "\n\n"
         else
             outfile_contents << "\t#{line}\n"

@@ -2,3 +2,4 @@ main
 bin/*
 .env
 tests/bindings.ha
+bindings/generated_codecs.ha
