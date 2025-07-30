@@ -76,7 +76,7 @@ while index < formatted_infile.length do
 
                 if l.start_with?("}") && l.end_with?(";") && l != "};"
                     name = l.split("}").last.chomp(";").strip
-                    outfile_contents << "#{"\t"*indentation_amount}#{name}: struct {\n"
+                    outfile_contents << "\n#{"\t"*indentation_amount}#{name}: struct {\n"
                     indentation_amount += 1
                     break
                 end
