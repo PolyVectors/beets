@@ -1,19 +1,28 @@
-struct test {
+struct test_struct {
     bool test_bool;
-    int *test_int;
+    bool *test_bool2;
+    int test_int;
+    int *test_int2;
     char test_char;
     char *test_string;
     char test_buf[16];
+    char *test_buf2[16];
+    struct {
+        bool test_bool;
+        bool *test_bool2;
+        int test_int;
+        int *test_int2;
+        char test_char;
+        char *test_string;
+        char test_buf[16];
+        char *test_buf2[16];
+    } test_struct;
 };
 
-/** ruby bindings/generate.rb tests/bindings.h tests/bindings.ha
-
- * Expected result:
-
- * export type test = struct {
- * test_bool: bool,
- * test_int: *i32,
- * test_char: c::char,
- * test_string: *c::char,
- * test_buf: [16]c::char,
- */
+enum test_enum {
+    TEST,
+    TEST2,
+    TEST3,
+    TEST4,
+    TEST5 = 100,
+};
