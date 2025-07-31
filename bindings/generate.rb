@@ -93,9 +93,9 @@ while index < formatted_infile.length do
         when struct_definition
             if line[-1] == ";"
                 name = line.split.last[0..-2]
-                is_pointer = name.start_with?('*')
-                name = name[1..-1] if is_pointer
+                is_pointer = line.include?("*")
                 type = line.split[1]
+
                 outfile_contents << "#{"\t"*indentation_amount}#{name}: #{"*" if is_pointer}#{type},\n"
             else
                 outfile_contents << "export type #{line.split[1]} = struct {\n"
@@ -116,11 +116,11 @@ while index < formatted_infile.length do
             outfile_contents << "#{"\t"*indentation_amount}#{name}: *fn(#{params}) #{return_type},\n"
         else
             name = line.split.last.chomp(';')
-            is_pointer = name.start_with?('*')
-            name = name[1..-1] if is_pointer
+            is_pointer = line.split[-2].strip == "*"
             name = name.split("[").first if name.include?("[")
 
-            type = convert_type(name, line.split[0..-2].join(' '), is_pointer, indentation_amount)
+            type = line.split[0..-2].join(' ').chomp(" *")
+            type = convert_type(name, type, is_pointer, indentation_amount)
 
             outfile_contents << "#{"\t"*indentation_amount}#{name}: #{type},\n"
         end
