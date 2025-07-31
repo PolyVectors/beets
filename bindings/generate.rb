@@ -92,7 +92,7 @@ while index < formatted_infile.length do
             end
         when struct_definition
             if line[-1] == ";"
-                name = line.split.last[0..-2]
+                name = line.split.last[0..-2].gsub("*", "")
                 is_pointer = line.include?("*")
                 type = line.split[1]
 
@@ -115,8 +115,8 @@ while index < formatted_infile.length do
 
             outfile_contents << "#{"\t"*indentation_amount}#{name}: *fn(#{params}) #{return_type},\n"
         else
-            name = line.split.last.chomp(';')
-            is_pointer = line.split[-2].strip == "*"
+            name = line.split.last.chomp(';').gsub("*", "")
+            is_pointer = line.include?("*")
             name = name.split("[").first if name.include?("[")
 
             type = line.split[0..-2].join(' ').chomp(" *")

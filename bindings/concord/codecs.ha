@@ -1,3 +1,5 @@
+// Partially auto-generated using generate.rb
+
 use types::c;
 
 export type strings = struct {
